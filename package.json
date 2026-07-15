@@ -1,0 +1,53 @@
+{
+  "name": "@forjio/storlaunch-node",
+  "version": "0.1.1",
+  "description": "Official Node.js SDK for Storlaunch \u2014 payment (checkout sessions, plans, subscriptions, invoices, receipts, customers, portal sessions, webhooks), storefront (products, licenses, deliveries), shipping, inventory, ledger, reports, payouts, discount codes, account (pixels, feeds, blog, referrals, abandoned cart, API keys, audit log, domains), analytics, billing, modules, manual orders, onboarding, buyer checkout + addresses.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "storlaunch",
+    "forjio",
+    "commerce",
+    "storefront",
+    "checkout",
+    "payments",
+    "shipping"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/hachimi-cat/storlaunch-node#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hachimi-cat/storlaunch-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hachimi-cat/storlaunch-node/issues"
+  }
+}
