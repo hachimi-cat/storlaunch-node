@@ -1,23 +1,22 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { StorlaunchClient } from '../src/index.js';
 
-function makeClient() {
+function makeClient(reply: () => Response = () => new Response(
+  JSON.stringify({ data: { ok: true }, error: null, meta: { requestId: 'r', timestamp: '' } }),
+  { headers: { 'content-type': 'application/json' } },
+)) {
   const captured: Array<{ url: string; method: string; body?: string; headers: Record<string, string> }> = [];
-  const realFetch = globalThis.fetch;
-  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
     captured.push({
       url: typeof input === 'string' ? input : input.toString(),
       method: init?.method ?? 'GET',
       body: typeof init?.body === 'string' ? init.body : undefined,
       headers: (init?.headers ?? {}) as Record<string, string>,
     });
-    return new Response(
-      JSON.stringify({ data: { ok: true }, error: null, meta: { requestId: 'r', timestamp: '' } }),
-      { headers: { 'content-type': 'application/json' } },
-    );
+    return reply();
   }) as typeof fetch;
-  const client = new StorlaunchClient({ keyId: 'ak', secret: 'sk', baseUrl: 'https://storlaunch.test' });
-  return { client, captured, restore: () => { globalThis.fetch = realFetch; } };
+  const client = new StorlaunchClient({ apiKey: 'sk_test_abc', baseUrl: 'https://storlaunch.test', fetchImpl });
+  return { client, captured, restore: () => {} };
 }
 
 describe('StorlaunchClient', () => {
@@ -30,9 +29,23 @@ describe('StorlaunchClient', () => {
     expect(h.captured[0]!.method).toBe('POST');
     expect(h.captured[0]!.url).toContain('/api/v1/payment/checkout-sessions');
   });
-  it('payment.subscriptions.cancel POSTs', async () => {
+  it('payment.checkoutSessions.create sends the idempotency key under both names', async () => {
+    await h.client.payment.checkoutSessions.create({ amount: 10000, currency: 'IDR' });
+    const { headers } = h.captured[0]!;
+    expect(headers['X-Idempotency-Key']).toMatch(/^idem_/);
+    expect(headers['Idempotency-Key']).toBe(headers['X-Idempotency-Key']);
+  });
+  it('payment.subscriptions.cancel DELETEs, at period end unless immediate', async () => {
     await h.client.payment.subscriptions.cancel('sub_1');
-    expect(h.captured[0]!.url).toContain('/api/v1/payment/subscriptions/sub_1/cancel');
+    await h.client.payment.subscriptions.cancel('sub_2', { immediate: true });
+    expect(h.captured[0]!.method).toBe('DELETE');
+    expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/payment/subscriptions/sub_1');
+    expect(h.captured[1]!.url).toBe('https://storlaunch.test/api/v1/payment/subscriptions/sub_2?immediate=true');
+  });
+  it('payment.plans.archive DELETEs the plan', async () => {
+    await h.client.payment.plans.archive('plan_1');
+    expect(h.captured[0]!.method).toBe('DELETE');
+    expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/payment/plans/plan_1');
   });
   it('storefront.products.archive DELETEs', async () => {
     await h.client.storefront.products.archive('p_1');
@@ -47,9 +60,10 @@ describe('StorlaunchClient', () => {
     await h.client.storefront.licenses.issue({ productId: 'p_1', customerId: 'c_1' });
     expect(h.captured[0]!.url).toContain('/api/v1/storefront/licenses');
   });
-  it('account.apiKeys.revoke POSTs', async () => {
+  it('account.apiKeys.revoke DELETEs', async () => {
     await h.client.account.apiKeys.revoke('ak_1');
-    expect(h.captured[0]!.url).toContain('/api/v1/account/api-keys/ak_1/revoke');
+    expect(h.captured[0]!.method).toBe('DELETE');
+    expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/account/api-keys/ak_1');
   });
   it('account.domains.verify POSTs', async () => {
     await h.client.account.domains.verify('dom_1');
@@ -63,13 +77,17 @@ describe('StorlaunchClient', () => {
     await h.client.analytics.overview();
     expect(h.captured[0]!.url).toContain('/api/v1/analytics/overview');
   });
-  it('billing.checkout POSTs', async () => {
-    await h.client.billing.checkout({ planId: 'pro' });
-    expect(h.captured[0]!.url).toContain('/api/v1/billing/checkout');
+  it('billing.checkout starts the upgrade at /billing/plugipay-invoice', async () => {
+    await h.client.billing.checkout({ plan: 'pro', interval: 'year' });
+    expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/billing/plugipay-invoice');
+    expect(JSON.parse(h.captured[0]!.body!)).toEqual({ plan: 'pro', interval: 'year' });
   });
-  it('modules.enable POSTs', async () => {
+  it('modules.enable / disable POST the toggle to /modules', async () => {
     await h.client.modules.enable('marketing');
-    expect(h.captured[0]!.url).toContain('/api/v1/modules/marketing/enable');
+    await h.client.modules.disable('payment');
+    expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/modules');
+    expect(JSON.parse(h.captured[0]!.body!)).toEqual({ module: 'marketing', enabled: true });
+    expect(JSON.parse(h.captured[1]!.body!)).toEqual({ module: 'payment', enabled: false });
   });
   it('shipping.rates POSTs', async () => {
     await h.client.shipping.rates({ destination: {}, items: [] });
@@ -79,9 +97,15 @@ describe('StorlaunchClient', () => {
     await h.client.inventory.adjust({ variantId: 'v_1', delta: 5 });
     expect(h.captured[0]!.url).toContain('/api/v1/inventory/adjust');
   });
-  it('ledger.balances GETs', async () => {
+  it('ledger reads entries and the balance, and posts adjustments', async () => {
+    await h.client.ledger.list({ limit: 10 });
     await h.client.ledger.balances();
-    expect(h.captured[0]!.url).toContain('/api/v1/ledger/balances');
+    await h.client.ledger.adjust({ amount: 1 });
+    expect(h.captured.map((c) => `${c.method} ${new URL(c.url).pathname}`)).toEqual([
+      'GET /api/v1/ledger/entries',
+      'GET /api/v1/ledger/balance',
+      'POST /api/v1/ledger/adjustments',
+    ]);
   });
   it('reports.pnl GETs with query', async () => {
     await h.client.reports.pnl({ from: '2026-01-01', to: '2026-06-30' });
@@ -91,22 +115,36 @@ describe('StorlaunchClient', () => {
     await h.client.payouts.request({ amount: 10000 });
     expect(h.captured[0]!.url).toContain('/api/v1/payouts');
   });
-  it('discountCodes.validate POSTs', async () => {
-    await h.client.discountCodes.validate({ code: 'SAVE20' });
-    expect(h.captured[0]!.url).toContain('/api/v1/discount-codes/validate');
-  });
-  it('buyer.addAddress POSTs', async () => {
-    await h.client.buyer.addAddress({ street: '...' });
-    expect(h.captured[0]!.url).toContain('/api/v1/checkout/addresses');
-  });
-  it('HMAC headers attached', async () => {
+  it('sends the API key as a Bearer token, and nothing else to authenticate', async () => {
     await h.client.analytics.overview();
-    expect(h.captured[0]!.headers.Authorization).toMatch(/^Storlaunch-HMAC-SHA256/);
+    const { headers } = h.captured[0]!;
+    expect(headers.Authorization).toBe('Bearer sk_test_abc');
+    expect(Object.keys(headers).sort()).toEqual(['Accept', 'Authorization']);
   });
-  it('forMerchant attaches X-Storlaunch-On-Behalf-Of', async () => {
-    const scoped = h.client.forMerchant('acc_xyz');
-    await scoped.analytics.overview();
-    expect(h.captured[0]!.headers['X-Storlaunch-On-Behalf-Of']).toBe('acc_xyz');
+  it('a 204 resolves to undefined, a CSV export to its text', async () => {
+    const empty = makeClient(() => new Response(null, { status: 204 }));
+    await expect(empty.client.storefront.licenses.revoke('KEY-1')).resolves.toBeUndefined();
+    expect(empty.captured[0]!.method).toBe('DELETE');
+    expect(empty.captured[0]!.url).toBe('https://storlaunch.test/api/v1/storefront/licenses/KEY-1');
+    const csv = makeClient(() => new Response('id,amount\nle_1,100\n', { headers: { 'content-type': 'text/csv' } }));
+    await expect(csv.client.reports.exportLedger()).resolves.toBe('id,amount\nle_1,100\n');
+    expect(csv.captured[0]!.url).toBe('https://storlaunch.test/api/v1/ledger/entries.csv');
+  });
+  it('an error envelope becomes a StorlaunchError', async () => {
+    const denied = makeClient(() => new Response(JSON.stringify({ data: null, error: { code: 'INVALID_API_KEY', message: 'Invalid or revoked API key' }, meta: { requestId: 'req_1' } }), { status: 401 }));
+    await expect(denied.client.analytics.overview()).rejects.toMatchObject({ status: 401, code: 'INVALID_API_KEY', requestId: 'req_1' });
+  });
+  it('asks for an API key, and says why when given the old keyId/secret', () => {
+    const saved = process.env.STORLAUNCH_API_KEY;
+    delete process.env.STORLAUNCH_API_KEY;
+    try {
+      expect(() => new StorlaunchClient()).toThrow(/apiKey is required/);
+      expect(() => new StorlaunchClient({ keyId: 'AKIA', secret: 's' } as never)).toThrow(/removed in 0\.2\.0/);
+      process.env.STORLAUNCH_API_KEY = 'sk_live_env';
+      expect(() => new StorlaunchClient()).not.toThrow();
+    } finally {
+      if (saved === undefined) delete process.env.STORLAUNCH_API_KEY; else process.env.STORLAUNCH_API_KEY = saved;
+    }
   });
   it('passthrough escape hatch works', async () => {
     await h.client.passthrough('GET', '/api/v1/custom/route');
