@@ -1332,9 +1332,12 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/reports/pnl`, {}, undefined);
   }
 
-  /** List areas (GET /api/v1/shipping/areas) */
-  shippingAreas(): Promise<unknown> {
-    return this.call("GET", `/api/v1/shipping/areas`, {}, undefined);
+  /** Area search (the Biteship area ids an origin/rates call takes) lives in fulkruma. (GET /api/v1/shipping/areas) */
+  shippingAreas(input?: { "q"?: unknown }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["q"] = all["q"]; delete all["q"];
+    return this.call("GET", `/api/v1/shipping/areas`, query, undefined);
   }
 
   /** List couriers (GET /api/v1/shipping/couriers) */
