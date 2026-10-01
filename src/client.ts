@@ -179,14 +179,28 @@ export class StorlaunchClient {
     },
     webhookEndpoints: {
       list: () => this.request<L>({ method: 'GET', path: '/api/v1/payment/webhook-endpoints' }),
-      create: (input: { url: string; events?: string[] }) =>
+      get: (id: string) => this.request<R>({ method: 'GET', path: `/api/v1/payment/webhook-endpoints/${id}` }),
+      /** `events`: exact types, `*` or a prefix ending in `*`; omitted = everything. The
+       *  response is the only time `secret` is returned. */
+      create: (input: { url: string; events?: string[]; description?: string; active?: boolean }) =>
         this.request<R>({ method: 'POST', path: '/api/v1/payment/webhook-endpoints', body: input, idempotencyKey: this.genIdem() }),
+      /** `active: true` also clears the failure streak of an endpoint Storlaunch switched off;
+       *  `rotateSecret: true` returns a new `secret` (once) and retires the old one. */
+      update: (id: string, patch: { url?: string; events?: string[]; description?: string; active?: boolean; rotateSecret?: boolean }) =>
+        this.request<R>({ method: 'PATCH', path: `/api/v1/payment/webhook-endpoints/${id}`, body: patch }),
       delete: (id: string) =>
         this.request<R>({ method: 'DELETE', path: `/api/v1/payment/webhook-endpoints/${id}` }),
+      /** `{ storlaunch, plugipay }`: the types an endpoint can subscribe to. */
+      eventTypes: () => this.request<R>({ method: 'GET', path: '/api/v1/payment/webhook-endpoints/event-types' }),
+      /** Queue a test event (`evt_test_…`) for this endpoint alone; returns the delivery. */
+      sendTest: (id: string) => this.request<R>({ method: 'POST', path: `/api/v1/payment/webhook-endpoints/${id}/test` }),
     },
+    /** The delivery log: one row per event per endpoint, with every attempt. */
     webhookEvents: {
       list: (params: R = {}) => this.request<L>({ method: 'GET', path: `/api/v1/payment/webhook-events${qs(params)}` }),
       get: (id: string) => this.request<R>({ method: 'GET', path: `/api/v1/payment/webhook-events/${id}` }),
+      /** Queue one more attempt now (202, `pending`); 409 when already queued or the endpoint is off. */
+      resend: (id: string) => this.request<R>({ method: 'POST', path: `/api/v1/payment/webhook-events/${id}/resend` }),
     },
   };
 

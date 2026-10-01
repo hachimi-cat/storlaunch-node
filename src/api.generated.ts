@@ -7,7 +7,7 @@ export interface ApigenTransport {
   apigenRequest(method: string, path: string, query: Record<string, unknown> | undefined, body: unknown): Promise<unknown>;
 }
 
-/** All 299 feature routes of the Storlaunch API. */
+/** All 301 feature routes of the Storlaunch API. */
 export class GeneratedApi {
   constructor(private readonly client: ApigenTransport) {}
 
@@ -56,8 +56,13 @@ export class GeneratedApi {
   }
 
   /** List posts (GET /api/v1/account/blog/posts) */
-  accountBlogPosts(): Promise<unknown> {
-    return this.call("GET", `/api/v1/account/blog/posts`, {}, undefined);
+  accountBlogPosts(input?: { "status"?: "draft" | "published"; "limit"?: number; "cursor"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["status"] = all["status"]; delete all["status"];
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    return this.call("GET", `/api/v1/account/blog/posts`, query, undefined);
   }
 
   /** Publish a post (POST /api/v1/account/blog/posts/{id}/publish) */
@@ -232,18 +237,29 @@ export class GeneratedApi {
   }
 
   /** GET /analytics/overview Response shape is flat to match what the dashboard page reads (frontend/src/app/(dashboard)/dashboard/page.tsx). `recentTransactions` unions paid Invoices (Plugipay-driven) and (GET /api/v1/analytics/overview) */
-  analyticsOverview(): Promise<unknown> {
-    return this.call("GET", `/api/v1/analytics/overview`, {}, undefined);
+  analyticsOverview(input?: { "period"?: "7d" | "30d" | "90d" | "12m" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["period"] = all["period"]; delete all["period"];
+    return this.call("GET", `/api/v1/analytics/overview`, query, undefined);
   }
 
   /** GET /analytics/revenue (GET /api/v1/analytics/revenue) */
-  analyticsRevenue(): Promise<unknown> {
-    return this.call("GET", `/api/v1/analytics/revenue`, {}, undefined);
+  analyticsRevenue(input?: { "period"?: "7d" | "30d" | "90d" | "12m"; "granularity"?: "day" | "week" | "month" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["period"] = all["period"]; delete all["period"];
+    query["granularity"] = all["granularity"]; delete all["granularity"];
+    return this.call("GET", `/api/v1/analytics/revenue`, query, undefined);
   }
 
   /** GET /analytics/subscriptions (GET /api/v1/analytics/subscriptions) */
-  analyticsSubscriptions(): Promise<unknown> {
-    return this.call("GET", `/api/v1/analytics/subscriptions`, {}, undefined);
+  analyticsSubscriptions(input?: { "period"?: "7d" | "30d" | "90d" | "12m"; "granularity"?: "day" | "week" | "month" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["period"] = all["period"]; delete all["period"];
+    query["granularity"] = all["granularity"]; delete all["granularity"];
+    return this.call("GET", `/api/v1/analytics/subscriptions`, query, undefined);
   }
 
   /** Downgrade to free (POST /api/v1/billing/cancel) */
@@ -299,8 +315,13 @@ export class GeneratedApi {
   }
 
   /** List buyers (GET /api/v1/buyers) */
-  buyersList(): Promise<unknown> {
-    return this.call("GET", `/api/v1/buyers`, {}, undefined);
+  buyersList(input?: { "search"?: string; "limit"?: number; "cursor"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["search"] = all["search"]; delete all["search"];
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    return this.call("GET", `/api/v1/buyers`, query, undefined);
   }
 
   /** Create a credential. (POST /api/v1/certifications) */
@@ -629,8 +650,11 @@ export class GeneratedApi {
   }
 
   /** List products (GET /api/v1/conversations/embed/products) */
-  conversationsEmbedProducts(): Promise<unknown> {
-    return this.call("GET", `/api/v1/conversations/embed/products`, {}, undefined);
+  conversationsEmbedProducts(input?: { "q"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["q"] = all["q"]; delete all["q"];
+    return this.call("GET", `/api/v1/conversations/embed/products`, query, undefined);
   }
 
   /** List conversations (GET /api/v1/conversations) */
@@ -838,8 +862,14 @@ export class GeneratedApi {
   }
 
   /** List manual orders (GET /api/v1/manual-orders) */
-  manualOrdersList(): Promise<unknown> {
-    return this.call("GET", `/api/v1/manual-orders`, {}, undefined);
+  manualOrdersList(input?: { "limit"?: number; "cursor"?: string; "paymentStatus"?: "awaiting_payment" | "payment_claimed" | "payment_confirmed" | "canceled" | "refunded"; "fulfillmentStatus"?: "preparing" | "ready_to_ship" | "shipped" | "delivered" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["paymentStatus"] = all["paymentStatus"]; delete all["paymentStatus"];
+    query["fulfillmentStatus"] = all["fulfillmentStatus"]; delete all["fulfillmentStatus"];
+    return this.call("GET", `/api/v1/manual-orders`, query, undefined);
   }
 
   /** S-086: live Biteship tracking (driver, status, history) for orders with a Fulkruma-managed shipment. (GET /api/v1/manual-orders/{id}/tracking) */
@@ -879,8 +909,14 @@ export class GeneratedApi {
   }
 
   /** List checkout sessions (GET /api/v1/payment/checkout-sessions) */
-  paymentCheckoutSessions(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/checkout-sessions`, {}, undefined);
+  paymentCheckoutSessions(input?: { "limit"?: number; "cursor"?: string; "status"?: "open" | "completed" | "expired"; "customerId"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["status"] = all["status"]; delete all["status"];
+    query["customerId"] = all["customerId"]; delete all["customerId"];
+    return this.call("GET", `/api/v1/payment/checkout-sessions`, query, undefined);
   }
 
   /** Proxies to Plugipay's `POST /checkout-sessions/:id/confirm` which flips a `pending_review` session to `completed` + fires the session.completed.v1 event + marks the linked invoice paid + writes a ledg (POST /api/v1/payment/checkout-sessions/{id}/confirm) */
@@ -944,16 +980,21 @@ export class GeneratedApi {
     return this.call("POST", `/api/v1/payment/subscriptions`, query, all);
   }
 
-  /** Create a webhook endpoint (POST /api/v1/payment/webhook-endpoints) */
-  paymentCreateWebhookEndpoints(input: { "url": string; "events": unknown[]; "description"?: string; [field: string]: unknown }): Promise<unknown> {
+  /** Register an endpoint. (POST /api/v1/payment/webhook-endpoints) */
+  paymentCreateWebhookEndpoints(input: { "url": string; "events"?: unknown[]; "description"?: string; "active"?: boolean; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("POST", `/api/v1/payment/webhook-endpoints`, query, all);
   }
 
   /** List customers (GET /api/v1/payment/customers) */
-  paymentCustomers(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/customers`, {}, undefined);
+  paymentCustomers(input?: { "limit"?: number; "cursor"?: string; "email"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["email"] = all["email"]; delete all["email"];
+    return this.call("GET", `/api/v1/payment/customers`, query, undefined);
   }
 
   /** Remove a session that never took money. (DELETE /api/v1/payment/checkout-sessions/{id}) */
@@ -1029,7 +1070,7 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}`, {}, undefined);
   }
 
-  /** Get a webhook event (GET /api/v1/payment/webhook-events/{id}) */
+  /** Get a webhook delivery, with every attempt made at it. (GET /api/v1/payment/webhook-events/{id}) */
   paymentGetWebhookEvents(id: string): Promise<unknown> {
     return this.call("GET", `/api/v1/payment/webhook-events/${encodeURIComponent(id)}`, {}, undefined);
   }
@@ -1074,8 +1115,15 @@ export class GeneratedApi {
   }
 
   /** List invoices (GET /api/v1/payment/invoices) */
-  paymentInvoices(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/invoices`, {}, undefined);
+  paymentInvoices(input?: { "limit"?: number; "cursor"?: string; "customerId"?: string; "subscriptionId"?: string; "status"?: "draft" | "open" | "paid" | "overdue" | "void" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["customerId"] = all["customerId"]; delete all["customerId"];
+    query["subscriptionId"] = all["subscriptionId"]; delete all["subscriptionId"];
+    query["status"] = all["status"]; delete all["status"];
+    return this.call("GET", `/api/v1/payment/invoices`, query, undefined);
   }
 
   /** CSV export of invoices — up to 10k rows via paginated SDK fetch. (GET /api/v1/payment/invoices/export.csv) */
@@ -1094,8 +1142,13 @@ export class GeneratedApi {
   }
 
   /** List plans (GET /api/v1/payment/plans) */
-  paymentPlans(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/plans`, {}, undefined);
+  paymentPlans(input?: { "limit"?: number; "cursor"?: string; "active"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["active"] = all["active"]; delete all["active"];
+    return this.call("GET", `/api/v1/payment/plans`, query, undefined);
   }
 
   /** Template preview returns raw HTML (not envelope JSON), so the generic catch-all below would try to JSON-parse it and throw. (POST /api/v1/payment/plugipay-settings/templates/preview) */
@@ -1169,8 +1222,15 @@ export class GeneratedApi {
   }
 
   /** List subscriptions (GET /api/v1/payment/subscriptions) */
-  paymentSubscriptions(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/subscriptions`, {}, undefined);
+  paymentSubscriptions(input?: { "limit"?: number; "cursor"?: string; "customerId"?: string; "planId"?: string; "status"?: "trialing" | "active" | "past_due" | "paused" | "canceled" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["customerId"] = all["customerId"]; delete all["customerId"];
+    query["planId"] = all["planId"]; delete all["planId"];
+    query["status"] = all["status"]; delete all["status"];
+    return this.call("GET", `/api/v1/payment/subscriptions`, query, undefined);
   }
 
   /** Update a customer (PATCH /api/v1/payment/customers/{id}) */
@@ -1201,24 +1261,46 @@ export class GeneratedApi {
     return this.call("PATCH", `/api/v1/payment/subscriptions/${encodeURIComponent(id)}`, query, all);
   }
 
-  /** Update a webhook endpoint (PATCH /api/v1/payment/webhook-endpoints/{id}) */
-  paymentUpdateWebhookEndpoints(id: string, input?: { "url"?: string; "events"?: unknown[]; "active"?: boolean; "description"?: string; [field: string]: unknown }): Promise<unknown> {
+  /** Update an endpoint. `active: false` pauses it (its queued deliveries become failed); `active: true` re-enables it — also after Storlaunch switched it off for failing — and clears its failure streak. (PATCH /api/v1/payment/webhook-endpoints/{id}) */
+  paymentUpdateWebhookEndpoints(id: string, input?: { "url"?: string; "events"?: unknown[]; "active"?: boolean; "description"?: string; "rotateSecret"?: boolean; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("PATCH", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}`, query, all);
   }
 
-  /** List webhook endpoints (GET /api/v1/payment/webhook-endpoints) */
-  paymentWebhookEndpoints(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/webhook-endpoints`, {}, undefined);
+  /** List endpoints, newest first. (GET /api/v1/payment/webhook-endpoints) */
+  paymentWebhookEndpoints(input?: { "limit"?: number; "cursor"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    return this.call("GET", `/api/v1/payment/webhook-endpoints`, query, undefined);
   }
 
-  /** List webhook events (GET /api/v1/payment/webhook-events) */
-  paymentWebhookEvents(): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/webhook-events`, {}, undefined);
+  /** The event types an endpoint can subscribe to: Storlaunch's own catalogue, and — with the Payment module on — Plugipay's (delivered by Plugipay to the same endpoint). (GET /api/v1/payment/webhook-endpoints/event-types) */
+  paymentWebhookEndpointsEventTypes(): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/webhook-endpoints/event-types`, {}, undefined);
   }
 
-  /** Resend a webhook event (POST /api/v1/payment/webhook-events/{id}/resend) */
+  /** Send a test event. (POST /api/v1/payment/webhook-endpoints/{id}/test) */
+  paymentWebhookEndpointsTest(id: string): Promise<unknown> {
+    return this.call("POST", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}/test`, {}, undefined);
+  }
+
+  /** List webhook deliveries, newest first: each with its status (pending, sent, failed), attempt count, next retry, last response and every attempt made. (GET /api/v1/payment/webhook-events) */
+  paymentWebhookEvents(input?: { "limit"?: number; "cursor"?: string; "type"?: string; "endpointId"?: string; "status"?: "pending" | "sent" | "failed"; "source"?: "storlaunch" | "plugipay" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["type"] = all["type"]; delete all["type"];
+    query["endpointId"] = all["endpointId"]; delete all["endpointId"];
+    query["status"] = all["status"]; delete all["status"];
+    query["source"] = all["source"]; delete all["source"];
+    return this.call("GET", `/api/v1/payment/webhook-events`, query, undefined);
+  }
+
+  /** Resend a webhook delivery. (POST /api/v1/payment/webhook-events/{id}/resend) */
   paymentWebhookEventsResend(id: string): Promise<unknown> {
     return this.call("POST", `/api/v1/payment/webhook-events/${encodeURIComponent(id)}/resend`, {}, undefined);
   }
@@ -1390,8 +1472,19 @@ export class GeneratedApi {
   }
 
   /** List label (GET /api/v1/shipping/shipments/{id}/label) */
-  shippingShipmentsLabel(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/shipping/shipments/${encodeURIComponent(id)}/label`, {}, undefined);
+  shippingShipmentsLabel(id: string, input?: { "size"?: "a4" | "thermal-80x100" | "thermal-100x150"; "showSenderPhone"?: "true" | "false"; "showRecipientPhone"?: "true" | "false"; "maskRecipientName"?: "true" | "false"; "showShippingCost"?: "true" | "false"; "showInsurance"?: "true" | "false"; "showItems"?: "true" | "false"; "showItemDescriptions"?: "true" | "false"; "showItemSkus"?: "true" | "false" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["size"] = all["size"]; delete all["size"];
+    query["showSenderPhone"] = all["showSenderPhone"]; delete all["showSenderPhone"];
+    query["showRecipientPhone"] = all["showRecipientPhone"]; delete all["showRecipientPhone"];
+    query["maskRecipientName"] = all["maskRecipientName"]; delete all["maskRecipientName"];
+    query["showShippingCost"] = all["showShippingCost"]; delete all["showShippingCost"];
+    query["showInsurance"] = all["showInsurance"]; delete all["showInsurance"];
+    query["showItems"] = all["showItems"]; delete all["showItems"];
+    query["showItemDescriptions"] = all["showItemDescriptions"]; delete all["showItemDescriptions"];
+    query["showItemSkus"] = all["showItemSkus"]; delete all["showItemSkus"];
+    return this.call("GET", `/api/v1/shipping/shipments/${encodeURIComponent(id)}/label`, query, undefined);
   }
 
   /** Rebook a shipment (POST /api/v1/shipping/shipments/{id}/rebook) */
@@ -1419,8 +1512,12 @@ export class GeneratedApi {
   }
 
   /** What this rupiah amount of credit costs on a given rail. (GET /api/v1/shipping-credits/quote) */
-  shippingCreditsQuote(): Promise<unknown> {
-    return this.call("GET", `/api/v1/shipping-credits/quote`, {}, undefined);
+  shippingCreditsQuote(input: { "amount": number; "currency"?: "IDR" | "USD" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["amount"] = all["amount"]; delete all["amount"];
+    query["currency"] = all["currency"]; delete all["currency"];
+    return this.call("GET", `/api/v1/shipping-credits/quote`, query, undefined);
   }
 
   /** Create a topup (POST /api/v1/shipping-credits/topup) */
@@ -1440,8 +1537,13 @@ export class GeneratedApi {
   }
 
   /** List shoppers (GET /api/v1/shoppers) */
-  shoppersList(): Promise<unknown> {
-    return this.call("GET", `/api/v1/shoppers`, {}, undefined);
+  shoppersList(input?: { "search"?: string; "limit"?: number; "cursor"?: string }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["search"] = all["search"]; delete all["search"];
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    return this.call("GET", `/api/v1/shoppers`, query, undefined);
   }
 
   /** Issue a license. (POST /api/v1/storefront/licenses) */
@@ -1588,8 +1690,14 @@ export class GeneratedApi {
   }
 
   /** GET /storefront/products (GET /api/v1/storefront/products) */
-  storefrontProducts(): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/products`, {}, undefined);
+  storefrontProducts(input?: { "limit"?: number; "cursor"?: string; "published"?: string; "type"?: "digital" | "subscription" | "physical" | "license" }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["limit"] = all["limit"]; delete all["limit"];
+    query["cursor"] = all["cursor"]; delete all["cursor"];
+    query["published"] = all["published"]; delete all["published"];
+    query["type"] = all["type"]; delete all["type"];
+    return this.call("GET", `/api/v1/storefront/products`, query, undefined);
   }
 
   /** Generate (regenerate) (POST /api/v1/storefront/products/{id}/ai-generate) */

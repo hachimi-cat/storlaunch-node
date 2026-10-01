@@ -42,6 +42,21 @@ describe('StorlaunchClient', () => {
     expect(h.captured[0]!.url).toBe('https://storlaunch.test/api/v1/payment/subscriptions/sub_1');
     expect(h.captured[1]!.url).toBe('https://storlaunch.test/api/v1/payment/subscriptions/sub_2?immediate=true');
   });
+  it('payment.webhookEndpoints: get, update (rotateSecret), eventTypes, sendTest; webhookEvents.resend', async () => {
+    await h.client.payment.webhookEndpoints.get('we_1');
+    await h.client.payment.webhookEndpoints.update('we_1', { active: true, rotateSecret: true });
+    await h.client.payment.webhookEndpoints.eventTypes();
+    await h.client.payment.webhookEndpoints.sendTest('we_1');
+    await h.client.payment.webhookEvents.resend('whd_1');
+    expect(h.captured.map((c) => `${c.method} ${c.url.replace('https://storlaunch.test', '')}`)).toEqual([
+      'GET /api/v1/payment/webhook-endpoints/we_1',
+      'PATCH /api/v1/payment/webhook-endpoints/we_1',
+      'GET /api/v1/payment/webhook-endpoints/event-types',
+      'POST /api/v1/payment/webhook-endpoints/we_1/test',
+      'POST /api/v1/payment/webhook-events/whd_1/resend',
+    ]);
+    expect(JSON.parse(h.captured[1]!.body!)).toEqual({ active: true, rotateSecret: true });
+  });
   it('payment.plans.archive DELETEs the plan', async () => {
     await h.client.payment.plans.archive('plan_1');
     expect(h.captured[0]!.method).toBe('DELETE');
