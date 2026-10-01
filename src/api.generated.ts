@@ -60,11 +60,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/account/blog/posts`, {}, undefined);
   }
 
-  /** Get a post (GET /api/v1/account/blog/posts/{id}) */
-  accountBlogPosts2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/account/blog/posts/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Publish a post (POST /api/v1/account/blog/posts/{id}/publish) */
   accountBlogPostsPublish(id: string): Promise<unknown> {
     return this.call("POST", `/api/v1/account/blog/posts/${encodeURIComponent(id)}/publish`, {}, undefined);
@@ -116,11 +111,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/account/domains`, {}, undefined);
   }
 
-  /** Get domain (GET /api/v1/account/domains/{id}) */
-  accountDomains2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/account/domains/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Provisioner callback (no auth, secret-verified) (POST /api/v1/account/domains/provision-callback) */
   accountDomainsProvisionCallback(input?: { "domain"?: unknown; "error"?: unknown; "status"?: unknown; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
@@ -144,6 +134,16 @@ export class GeneratedApi {
     const query: Record<string, unknown> = {};
     query["format"] = all["format"]; delete all["format"];
     return this.call("GET", `/api/v1/account/feeds/preview`, query, undefined);
+  }
+
+  /** Get a post (GET /api/v1/account/blog/posts/{id}) */
+  accountGetBlogPosts(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/account/blog/posts/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get domain (GET /api/v1/account/domains/{id}) */
+  accountGetDomains(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/account/domains/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** GET /account (GET /api/v1/account) */
@@ -333,19 +333,11 @@ export class GeneratedApi {
   }
 
   /** List addresses (GET /api/v1/checkout/addresses) */
-  checkoutAddresses(input?: { "accountSlug"?: unknown }): Promise<unknown> {
+  checkoutAddresses(input: { "accountSlug": unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["accountSlug"] = all["accountSlug"]; delete all["accountSlug"];
     return this.call("GET", `/api/v1/checkout/addresses`, query, undefined);
-  }
-
-  /** Get an address (GET /api/v1/checkout/addresses/{id}) */
-  checkoutAddresses2(id: string, input?: { "accountSlug"?: unknown }): Promise<unknown> {
-    const all: Record<string, unknown> = { ...(input ?? {}) };
-    const query: Record<string, unknown> = {};
-    query["accountSlug"] = all["accountSlug"]; delete all["accountSlug"];
-    return this.call("GET", `/api/v1/checkout/addresses/${encodeURIComponent(id)}`, query, undefined);
   }
 
   /** Default an address (POST /api/v1/checkout/addresses/{id}/default) */
@@ -432,7 +424,7 @@ export class GeneratedApi {
   }
 
   /** Delete an address (DELETE /api/v1/checkout/addresses/{id}) */
-  checkoutDeleteAddresses(id: string, input?: { "accountSlug"?: unknown; [field: string]: unknown }): Promise<unknown> {
+  checkoutDeleteAddresses(id: string, input: { "accountSlug": unknown; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["accountSlug"] = all["accountSlug"]; delete all["accountSlug"];
@@ -467,6 +459,29 @@ export class GeneratedApi {
     return this.call("POST", `/api/v1/checkout/deliveries/${encodeURIComponent(deliveryId)}/license/deactivate`, query, all);
   }
 
+  /** Get an address (GET /api/v1/checkout/addresses/{id}) */
+  checkoutGetAddresses(id: string, input: { "accountSlug": unknown }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["accountSlug"] = all["accountSlug"]; delete all["accountSlug"];
+    return this.call("GET", `/api/v1/checkout/addresses/${encodeURIComponent(id)}`, query, undefined);
+  }
+
+  /** Get an invoice (GET /api/v1/checkout/invoices/{id}) */
+  checkoutGetInvoices(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/checkout/invoices/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get an order (GET /api/v1/checkout/orders/{id}) */
+  checkoutGetOrders(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/checkout/orders/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a subscription (GET /api/v1/checkout/subscriptions/{id}) */
+  checkoutGetSubscriptions(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/checkout/subscriptions/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
   /** Digital deliveries someone else bought for this buyer. (GET /api/v1/checkout/gifts) */
   checkoutGifts(): Promise<unknown> {
     return this.call("GET", `/api/v1/checkout/gifts`, {}, undefined);
@@ -475,11 +490,6 @@ export class GeneratedApi {
   /** List invoices (GET /api/v1/checkout/invoices) */
   checkoutInvoices(): Promise<unknown> {
     return this.call("GET", `/api/v1/checkout/invoices`, {}, undefined);
-  }
-
-  /** Get an invoice (GET /api/v1/checkout/invoices/{id}) */
-  checkoutInvoices2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/checkout/invoices/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Streams the invoice as application/pdf — call sites set `?download=1` to trigger download. (GET /api/v1/checkout/invoices/{id}/pdf) */
@@ -501,11 +511,6 @@ export class GeneratedApi {
   /** List orders (GET /api/v1/checkout/orders) */
   checkoutOrders(): Promise<unknown> {
     return this.call("GET", `/api/v1/checkout/orders`, {}, undefined);
-  }
-
-  /** Get an order (GET /api/v1/checkout/orders/{id}) */
-  checkoutOrders2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/checkout/orders/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** List profile (GET /api/v1/checkout/profile) */
@@ -545,11 +550,6 @@ export class GeneratedApi {
   /** List subscriptions (GET /api/v1/checkout/subscriptions) */
   checkoutSubscriptions(): Promise<unknown> {
     return this.call("GET", `/api/v1/checkout/subscriptions`, {}, undefined);
-  }
-
-  /** Get a subscription (GET /api/v1/checkout/subscriptions/{id}) */
-  checkoutSubscriptions2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/checkout/subscriptions/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Cancel a subscription (POST /api/v1/checkout/subscriptions/{id}/cancel) */
@@ -727,7 +727,7 @@ export class GeneratedApi {
   }
 
   /** List stock (GET /api/v1/inventory/stock) */
-  inventoryStock(input?: { "variantId"?: unknown }): Promise<unknown> {
+  inventoryStock(input: { "variantId": unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["variantId"] = all["variantId"]; delete all["variantId"];
@@ -749,7 +749,7 @@ export class GeneratedApi {
   }
 
   /** F-006: was missing — frontend's inventoryApi.listVariants(productId) hit a 404 here, which surfaced on the dashboard as "Failed to load inventory". (GET /api/v1/inventory/variants) */
-  inventoryVariants(input?: { "productId"?: unknown }): Promise<unknown> {
+  inventoryVariants(input: { "productId": unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["productId"] = all["productId"]; delete all["productId"];
@@ -790,14 +790,14 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/ledger/entries`, query, undefined);
   }
 
-  /** Get an entry (GET /api/v1/ledger/entries/{id}) */
-  ledgerEntries2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/ledger/entries/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** CSV export — pulls up to 10k rows (hard cap) and emits a CSV response. (GET /api/v1/ledger/entries.csv) */
   ledgerEntriesCsv(): Promise<unknown> {
     return this.call("GET", `/api/v1/ledger/entries.csv`, {}, undefined);
+  }
+
+  /** Get an entry (GET /api/v1/ledger/entries/{id}) */
+  ledgerGetEntries(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/ledger/entries/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Revert to template default by removing the merchant's override. (DELETE /api/v1/legal/{slug}) */
@@ -883,11 +883,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/checkout-sessions`, {}, undefined);
   }
 
-  /** Get a checkout session (GET /api/v1/payment/checkout-sessions/{id}) */
-  paymentCheckoutSessions2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/checkout-sessions/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Proxies to Plugipay's `POST /checkout-sessions/:id/confirm` which flips a `pending_review` session to `completed` + fires the session.completed.v1 event + marks the linked invoice paid + writes a ledg (POST /api/v1/payment/checkout-sessions/{id}/confirm) */
   paymentCheckoutSessionsConfirm(id: string): Promise<unknown> {
     return this.call("POST", `/api/v1/payment/checkout-sessions/${encodeURIComponent(id)}/confirm`, {}, undefined);
@@ -961,11 +956,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/customers`, {}, undefined);
   }
 
-  /** Get a customer (GET /api/v1/payment/customers/{id}) */
-  paymentCustomers2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/customers/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Remove a session that never took money. (DELETE /api/v1/payment/checkout-sessions/{id}) */
   paymentDeleteCheckoutSessions(id: string): Promise<unknown> {
     return this.call("DELETE", `/api/v1/payment/checkout-sessions/${encodeURIComponent(id)}`, {}, undefined);
@@ -999,6 +989,51 @@ export class GeneratedApi {
     return this.call("DELETE", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}`, {}, undefined);
   }
 
+  /** Get a checkout session (GET /api/v1/payment/checkout-sessions/{id}) */
+  paymentGetCheckoutSessions(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/checkout-sessions/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a customer (GET /api/v1/payment/customers/{id}) */
+  paymentGetCustomers(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/customers/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Balance lookup by redemption code (used by checkout too). (GET /api/v1/payment/gift-cards/{code}) */
+  paymentGetGiftCards(code: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/gift-cards/${encodeURIComponent(code)}`, {}, undefined);
+  }
+
+  /** Get an invoice (GET /api/v1/payment/invoices/{id}) */
+  paymentGetInvoices(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/invoices/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a plan (GET /api/v1/payment/plans/{id}) */
+  paymentGetPlans(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/plans/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a receipt (GET /api/v1/payment/receipts/{id}) */
+  paymentGetReceipts(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/receipts/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a subscription (GET /api/v1/payment/subscriptions/{id}) */
+  paymentGetSubscriptions(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/subscriptions/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a webhook endpoint (GET /api/v1/payment/webhook-endpoints/{id}) */
+  paymentGetWebhookEndpoints(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** Get a webhook event (GET /api/v1/payment/webhook-events/{id}) */
+  paymentGetWebhookEvents(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/payment/webhook-events/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
   /** List gift cards (filter by customer / status). (GET /api/v1/payment/gift-cards) */
   paymentGiftCards(input?: { "cursor"?: unknown; "customerId"?: unknown; "limit"?: unknown; "status"?: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
@@ -1008,11 +1043,6 @@ export class GeneratedApi {
     query["limit"] = all["limit"]; delete all["limit"];
     query["status"] = all["status"]; delete all["status"];
     return this.call("GET", `/api/v1/payment/gift-cards`, query, undefined);
-  }
-
-  /** Balance lookup by redemption code (used by checkout too). (GET /api/v1/payment/gift-cards/{code}) */
-  paymentGiftCards2(code: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/gift-cards/${encodeURIComponent(code)}`, {}, undefined);
   }
 
   /** Spend value off a card (externalRef = order/session id). (POST /api/v1/payment/gift-cards/{id}/redeem) */
@@ -1048,11 +1078,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/invoices`, {}, undefined);
   }
 
-  /** Get an invoice (GET /api/v1/payment/invoices/{id}) */
-  paymentInvoices2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/invoices/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** CSV export of invoices — up to 10k rows via paginated SDK fetch. (GET /api/v1/payment/invoices/export.csv) */
   paymentInvoicesExportCsv(): Promise<unknown> {
     return this.call("GET", `/api/v1/payment/invoices/export.csv`, {}, undefined);
@@ -1071,11 +1096,6 @@ export class GeneratedApi {
   /** List plans (GET /api/v1/payment/plans) */
   paymentPlans(): Promise<unknown> {
     return this.call("GET", `/api/v1/payment/plans`, {}, undefined);
-  }
-
-  /** Get a plan (GET /api/v1/payment/plans/{id}) */
-  paymentPlans2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/plans/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Template preview returns raw HTML (not envelope JSON), so the generic catch-all below would try to JSON-parse it and throw. (POST /api/v1/payment/plugipay-settings/templates/preview) */
@@ -1111,11 +1131,6 @@ export class GeneratedApi {
     query["limit"] = all["limit"]; delete all["limit"];
     query["sourceType"] = all["sourceType"]; delete all["sourceType"];
     return this.call("GET", `/api/v1/payment/receipts`, query, undefined);
-  }
-
-  /** Get a receipt (GET /api/v1/payment/receipts/{id}) */
-  paymentReceipts2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/receipts/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Email a receipt to the customer. `to` optional — falls back to the receipt's customer email on the Plugipay side. (POST /api/v1/payment/receipts/{id}/email) */
@@ -1158,11 +1173,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/subscriptions`, {}, undefined);
   }
 
-  /** Get a subscription (GET /api/v1/payment/subscriptions/{id}) */
-  paymentSubscriptions2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/subscriptions/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Update a customer (PATCH /api/v1/payment/customers/{id}) */
   paymentUpdateCustomers(id: string, input?: { "email"?: string; "name"?: string; "metadata"?: Record<string, unknown>; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
@@ -1203,19 +1213,9 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/payment/webhook-endpoints`, {}, undefined);
   }
 
-  /** Get a webhook endpoint (GET /api/v1/payment/webhook-endpoints/{id}) */
-  paymentWebhookEndpoints2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/webhook-endpoints/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** List webhook events (GET /api/v1/payment/webhook-events) */
   paymentWebhookEvents(): Promise<unknown> {
     return this.call("GET", `/api/v1/payment/webhook-events`, {}, undefined);
-  }
-
-  /** Get a webhook event (GET /api/v1/payment/webhook-events/{id}) */
-  paymentWebhookEvents2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/payment/webhook-events/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Resend a webhook event (POST /api/v1/payment/webhook-events/{id}/resend) */
@@ -1352,6 +1352,11 @@ export class GeneratedApi {
     return this.call("POST", `/api/v1/shipping/shipments`, query, all);
   }
 
+  /** Get a shipment (GET /api/v1/shipping/shipments/{id}) */
+  shippingGetShipments(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/shipping/shipments/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
   /** List origin (GET /api/v1/shipping/origin) */
   shippingOrigin(): Promise<unknown> {
     return this.call("GET", `/api/v1/shipping/origin`, {}, undefined);
@@ -1370,11 +1375,6 @@ export class GeneratedApi {
     const query: Record<string, unknown> = {};
     query["status"] = all["status"]; delete all["status"];
     return this.call("GET", `/api/v1/shipping/shipments`, query, undefined);
-  }
-
-  /** Get a shipment (GET /api/v1/shipping/shipments/{id}) */
-  shippingShipments2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/shipping/shipments/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Cancel a booking the courier hasn't collected. (POST /api/v1/shipping/shipments/{id}/cancel) */
@@ -1497,11 +1497,6 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/storefront/deliveries`, {}, undefined);
   }
 
-  /** Get a delivery (GET /api/v1/storefront/deliveries/{id}) */
-  storefrontDeliveries2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/deliveries/${encodeURIComponent(id)}`, {}, undefined);
-  }
-
   /** Extend the download window 30 days — from now, or from the current expiry if it's still in the future. (POST /api/v1/storefront/deliveries/{id}/extend) */
   storefrontDeliveriesExtend(id: string): Promise<unknown> {
     return this.call("POST", `/api/v1/storefront/deliveries/${encodeURIComponent(id)}/extend`, {}, undefined);
@@ -1517,14 +1512,56 @@ export class GeneratedApi {
     return this.call("POST", `/api/v1/storefront/deliveries/${encodeURIComponent(id)}/revoke`, {}, undefined);
   }
 
-  /** List licenses (GET /api/v1/storefront/licenses) */
-  storefrontLicenses(): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/licenses`, {}, undefined);
+  /** Get a delivery (GET /api/v1/storefront/deliveries/{id}) */
+  storefrontGetDeliveries(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/deliveries/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Get a license (GET /api/v1/storefront/licenses/{key}) */
-  storefrontLicenses2(key: string): Promise<unknown> {
+  storefrontGetLicenses(key: string): Promise<unknown> {
     return this.call("GET", `/api/v1/storefront/licenses/${encodeURIComponent(key)}`, {}, undefined);
+  }
+
+  /** GET /storefront/products/:id (GET /api/v1/storefront/products/{id}) */
+  storefrontGetProducts(id: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/products/${encodeURIComponent(id)}`, {}, undefined);
+  }
+
+  /** List all published products for a merchant (GET /api/v1/storefront/public/{merchantSlug}) */
+  storefrontGetPublic(merchantSlug: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}`, {}, undefined);
+  }
+
+  /** Single product detail (GET /api/v1/storefront/public/{merchantSlug}/{productSlug}) */
+  storefrontGetPublic2(merchantSlug: string, productSlug: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/${encodeURIComponent(productSlug)}`, {}, undefined);
+  }
+
+  /** Single post (GET /api/v1/storefront/public/{merchantSlug}/blog/{slug}) */
+  storefrontGetPublicBlog(merchantSlug: string, slug: string): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/blog/${encodeURIComponent(slug)}`, {}, undefined);
+  }
+
+  /** Public tracking endpoint — buyer enters email (or is logged in) to view their order. (GET /api/v1/storefront/public/{merchantSlug}/order/{number}) */
+  storefrontGetPublicOrder(merchantSlug: string, number: string, input?: { "email"?: unknown }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["email"] = all["email"]; delete all["email"];
+    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/order/${encodeURIComponent(number)}`, query, undefined);
+  }
+
+  /** View order details (requires signed URL) (GET /api/v1/storefront/public/order/{deliveryId}) */
+  storefrontGetPublicOrder2(deliveryId: string, input: { "email": unknown; "sig": unknown }): Promise<unknown> {
+    const all: Record<string, unknown> = { ...(input ?? {}) };
+    const query: Record<string, unknown> = {};
+    query["email"] = all["email"]; delete all["email"];
+    query["sig"] = all["sig"]; delete all["sig"];
+    return this.call("GET", `/api/v1/storefront/public/order/${encodeURIComponent(deliveryId)}`, query, undefined);
+  }
+
+  /** List licenses (GET /api/v1/storefront/licenses) */
+  storefrontLicenses(): Promise<unknown> {
+    return this.call("GET", `/api/v1/storefront/licenses`, {}, undefined);
   }
 
   /** Activate a license (POST /api/v1/storefront/licenses/{key}/activate) */
@@ -1542,7 +1579,7 @@ export class GeneratedApi {
   }
 
   /** Public unauthenticated validate — pings fulkruma's GET /licenses/validate directly via the platform client. (GET /api/v1/storefront/licenses/validate) */
-  storefrontLicensesValidate(input?: { "key"?: unknown; "productId"?: unknown }): Promise<unknown> {
+  storefrontLicensesValidate(input: { "key": unknown; "productId"?: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["key"] = all["key"]; delete all["key"];
@@ -1553,11 +1590,6 @@ export class GeneratedApi {
   /** GET /storefront/products (GET /api/v1/storefront/products) */
   storefrontProducts(): Promise<unknown> {
     return this.call("GET", `/api/v1/storefront/products`, {}, undefined);
-  }
-
-  /** GET /storefront/products/:id (GET /api/v1/storefront/products/{id}) */
-  storefrontProducts2(id: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/products/${encodeURIComponent(id)}`, {}, undefined);
   }
 
   /** Generate (regenerate) (POST /api/v1/storefront/products/{id}/ai-generate) */
@@ -1577,24 +1609,9 @@ export class GeneratedApi {
     return this.call("GET", `/api/v1/storefront/products/${encodeURIComponent(id)}/license-keys`, {}, undefined);
   }
 
-  /** List all published products for a merchant (GET /api/v1/storefront/public/{merchantSlug}) */
-  storefrontPublic(merchantSlug: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}`, {}, undefined);
-  }
-
-  /** Single product detail (GET /api/v1/storefront/public/{merchantSlug}/{productSlug}) */
-  storefrontPublic2(merchantSlug: string, productSlug: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/${encodeURIComponent(productSlug)}`, {}, undefined);
-  }
-
   /** Published posts list (GET /api/v1/storefront/public/{merchantSlug}/blog) */
   storefrontPublicBlog(merchantSlug: string): Promise<unknown> {
     return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/blog`, {}, undefined);
-  }
-
-  /** Single post (GET /api/v1/storefront/public/{merchantSlug}/blog/{slug}) */
-  storefrontPublicBlog2(merchantSlug: string, slug: string): Promise<unknown> {
-    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/blog/${encodeURIComponent(slug)}`, {}, undefined);
   }
 
   /** RSS 2.0 feed of published posts. (GET /api/v1/storefront/public/{merchantSlug}/blog/rss.xml) */
@@ -1628,7 +1645,7 @@ export class GeneratedApi {
   }
 
   /** Buyer-facing download. (GET /api/v1/storefront/public/dl/{deliveryId}/{fileId}) */
-  storefrontPublicDl(deliveryId: string, fileId: string, input?: { "token"?: unknown }): Promise<unknown> {
+  storefrontPublicDl(deliveryId: string, fileId: string, input: { "token": unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     query["token"] = all["token"]; delete all["token"];
@@ -1660,23 +1677,6 @@ export class GeneratedApi {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("POST", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/manual-checkout`, query, all);
-  }
-
-  /** Public tracking endpoint — buyer enters email (or is logged in) to view their order. (GET /api/v1/storefront/public/{merchantSlug}/order/{number}) */
-  storefrontPublicOrder(merchantSlug: string, number: string, input?: { "email"?: unknown }): Promise<unknown> {
-    const all: Record<string, unknown> = { ...(input ?? {}) };
-    const query: Record<string, unknown> = {};
-    query["email"] = all["email"]; delete all["email"];
-    return this.call("GET", `/api/v1/storefront/public/${encodeURIComponent(merchantSlug)}/order/${encodeURIComponent(number)}`, query, undefined);
-  }
-
-  /** View order details (requires signed URL) (GET /api/v1/storefront/public/order/{deliveryId}) */
-  storefrontPublicOrder2(deliveryId: string, input?: { "email"?: unknown; "sig"?: unknown }): Promise<unknown> {
-    const all: Record<string, unknown> = { ...(input ?? {}) };
-    const query: Record<string, unknown> = {};
-    query["email"] = all["email"]; delete all["email"];
-    query["sig"] = all["sig"]; delete all["sig"];
-    return this.call("GET", `/api/v1/storefront/public/order/${encodeURIComponent(deliveryId)}`, query, undefined);
   }
 
   /** Buyer-side "I have transferred" action. (POST /api/v1/storefront/public/order/{orderId}/claim-payment) */
@@ -1751,14 +1751,14 @@ export class GeneratedApi {
   }
 
   /** Request tracking links by email (POST /api/v1/storefront/public/track) */
-  storefrontPublicTrack(input?: { [field: string]: unknown }): Promise<unknown> {
+  storefrontPublicTrack(input: { "email": string; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("POST", `/api/v1/storefront/public/track`, query, all);
   }
 
   /** Public dry-run that the storefront checkout uses to compute a discount before committing. (POST /api/v1/storefront/public/validate-discount) */
-  storefrontPublicValidateDiscount(input?: { [field: string]: unknown }): Promise<unknown> {
+  storefrontPublicValidateDiscount(input?: { "code"?: unknown; "currency"?: unknown; "customerId"?: unknown; "items"?: unknown; "merchantSlug"?: unknown; "shipping"?: unknown; "subtotal"?: unknown; [field: string]: unknown }): Promise<unknown> {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("POST", `/api/v1/storefront/public/validate-discount`, query, all);
@@ -1865,5 +1865,130 @@ export class GeneratedApi {
     const all: Record<string, unknown> = { ...(input ?? {}) };
     const query: Record<string, unknown> = {};
     return this.call("PATCH", `/api/v1/workspaces/current/members/${encodeURIComponent(huudisSub)}`, query, all);
+  }
+
+  /** @deprecated The old name of `accountGetBlogPosts` (GET /api/v1/account/blog/posts/{id}). */
+  accountBlogPosts2(...args: Parameters<GeneratedApi["accountGetBlogPosts"]>): Promise<unknown> {
+    return this.accountGetBlogPosts(...args);
+  }
+
+  /** @deprecated The old name of `accountGetDomains` (GET /api/v1/account/domains/{id}). */
+  accountDomains2(...args: Parameters<GeneratedApi["accountGetDomains"]>): Promise<unknown> {
+    return this.accountGetDomains(...args);
+  }
+
+  /** @deprecated The old name of `checkoutGetAddresses` (GET /api/v1/checkout/addresses/{id}). */
+  checkoutAddresses2(...args: Parameters<GeneratedApi["checkoutGetAddresses"]>): Promise<unknown> {
+    return this.checkoutGetAddresses(...args);
+  }
+
+  /** @deprecated The old name of `checkoutGetInvoices` (GET /api/v1/checkout/invoices/{id}). */
+  checkoutInvoices2(...args: Parameters<GeneratedApi["checkoutGetInvoices"]>): Promise<unknown> {
+    return this.checkoutGetInvoices(...args);
+  }
+
+  /** @deprecated The old name of `checkoutGetOrders` (GET /api/v1/checkout/orders/{id}). */
+  checkoutOrders2(...args: Parameters<GeneratedApi["checkoutGetOrders"]>): Promise<unknown> {
+    return this.checkoutGetOrders(...args);
+  }
+
+  /** @deprecated The old name of `checkoutGetSubscriptions` (GET /api/v1/checkout/subscriptions/{id}). */
+  checkoutSubscriptions2(...args: Parameters<GeneratedApi["checkoutGetSubscriptions"]>): Promise<unknown> {
+    return this.checkoutGetSubscriptions(...args);
+  }
+
+  /** @deprecated The old name of `ledgerGetEntries` (GET /api/v1/ledger/entries/{id}). */
+  ledgerEntries2(...args: Parameters<GeneratedApi["ledgerGetEntries"]>): Promise<unknown> {
+    return this.ledgerGetEntries(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetCheckoutSessions` (GET /api/v1/payment/checkout-sessions/{id}). */
+  paymentCheckoutSessions2(...args: Parameters<GeneratedApi["paymentGetCheckoutSessions"]>): Promise<unknown> {
+    return this.paymentGetCheckoutSessions(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetCustomers` (GET /api/v1/payment/customers/{id}). */
+  paymentCustomers2(...args: Parameters<GeneratedApi["paymentGetCustomers"]>): Promise<unknown> {
+    return this.paymentGetCustomers(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetGiftCards` (GET /api/v1/payment/gift-cards/{code}). */
+  paymentGiftCards2(...args: Parameters<GeneratedApi["paymentGetGiftCards"]>): Promise<unknown> {
+    return this.paymentGetGiftCards(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetInvoices` (GET /api/v1/payment/invoices/{id}). */
+  paymentInvoices2(...args: Parameters<GeneratedApi["paymentGetInvoices"]>): Promise<unknown> {
+    return this.paymentGetInvoices(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetPlans` (GET /api/v1/payment/plans/{id}). */
+  paymentPlans2(...args: Parameters<GeneratedApi["paymentGetPlans"]>): Promise<unknown> {
+    return this.paymentGetPlans(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetReceipts` (GET /api/v1/payment/receipts/{id}). */
+  paymentReceipts2(...args: Parameters<GeneratedApi["paymentGetReceipts"]>): Promise<unknown> {
+    return this.paymentGetReceipts(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetSubscriptions` (GET /api/v1/payment/subscriptions/{id}). */
+  paymentSubscriptions2(...args: Parameters<GeneratedApi["paymentGetSubscriptions"]>): Promise<unknown> {
+    return this.paymentGetSubscriptions(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetWebhookEndpoints` (GET /api/v1/payment/webhook-endpoints/{id}). */
+  paymentWebhookEndpoints2(...args: Parameters<GeneratedApi["paymentGetWebhookEndpoints"]>): Promise<unknown> {
+    return this.paymentGetWebhookEndpoints(...args);
+  }
+
+  /** @deprecated The old name of `paymentGetWebhookEvents` (GET /api/v1/payment/webhook-events/{id}). */
+  paymentWebhookEvents2(...args: Parameters<GeneratedApi["paymentGetWebhookEvents"]>): Promise<unknown> {
+    return this.paymentGetWebhookEvents(...args);
+  }
+
+  /** @deprecated The old name of `shippingGetShipments` (GET /api/v1/shipping/shipments/{id}). */
+  shippingShipments2(...args: Parameters<GeneratedApi["shippingGetShipments"]>): Promise<unknown> {
+    return this.shippingGetShipments(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetDeliveries` (GET /api/v1/storefront/deliveries/{id}). */
+  storefrontDeliveries2(...args: Parameters<GeneratedApi["storefrontGetDeliveries"]>): Promise<unknown> {
+    return this.storefrontGetDeliveries(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetLicenses` (GET /api/v1/storefront/licenses/{key}). */
+  storefrontLicenses2(...args: Parameters<GeneratedApi["storefrontGetLicenses"]>): Promise<unknown> {
+    return this.storefrontGetLicenses(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetProducts` (GET /api/v1/storefront/products/{id}). */
+  storefrontProducts2(...args: Parameters<GeneratedApi["storefrontGetProducts"]>): Promise<unknown> {
+    return this.storefrontGetProducts(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetPublic` (GET /api/v1/storefront/public/{merchantSlug}). */
+  storefrontPublic(...args: Parameters<GeneratedApi["storefrontGetPublic"]>): Promise<unknown> {
+    return this.storefrontGetPublic(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetPublic2` (GET /api/v1/storefront/public/{merchantSlug}/{productSlug}). */
+  storefrontPublic2(...args: Parameters<GeneratedApi["storefrontGetPublic2"]>): Promise<unknown> {
+    return this.storefrontGetPublic2(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetPublicBlog` (GET /api/v1/storefront/public/{merchantSlug}/blog/{slug}). */
+  storefrontPublicBlog2(...args: Parameters<GeneratedApi["storefrontGetPublicBlog"]>): Promise<unknown> {
+    return this.storefrontGetPublicBlog(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetPublicOrder` (GET /api/v1/storefront/public/{merchantSlug}/order/{number}). */
+  storefrontPublicOrder(...args: Parameters<GeneratedApi["storefrontGetPublicOrder"]>): Promise<unknown> {
+    return this.storefrontGetPublicOrder(...args);
+  }
+
+  /** @deprecated The old name of `storefrontGetPublicOrder2` (GET /api/v1/storefront/public/order/{deliveryId}). */
+  storefrontPublicOrder2(...args: Parameters<GeneratedApi["storefrontGetPublicOrder2"]>): Promise<unknown> {
+    return this.storefrontGetPublicOrder2(...args);
   }
 }
